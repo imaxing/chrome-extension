@@ -1,0 +1,31 @@
+.job_info {
+  position: fixed;
+  right: 140px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 420px;
+  height: 365px;
+  border-radius: 4px;
+  background: #fff;
+  padding: 10px;
+  border: 1px solid #eee;
+  z-index: 1000000;
+  box-shadow: 0 0 12px 0 rgba(0,0,0,.04);
+  /* background: url(https://files.wondercv.com/download-code/community-dialog.png) no-repeat center center; */
+    /* background-size: 100%; */
+    color: #333;
+    word-break: break-all;
+}
+.job_info .close_el {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  font-size: 12px;
+  width: 40px;
+  height: 20px;
+  cursor: pointer;
+  color: #ddd;
+}
+/* .job_info * {
+  opacity: 0;
+} */
