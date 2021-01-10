@@ -50,13 +50,28 @@ function checkisAuthed() {
   })
 }
 
+// 向 content 发消息
+function sendMsgToContentScript(message, callback) {
+  chrome.tabs.getSelected(null, tab => {
+    chrome.tabs.sendMessage(tab.id, message, response => {
+      callback && callback(response)
+    })
+  })
+}
+
+// 接收 content 消息
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if(request.type === 'contentMsg'){
+    console.log('收到来自content的消息：' + request.value)
+  }
+  sendResponse('我是后台，已收到你的消息。')
+})
+
 // 用户访问目标站点的时候执行的逻辑
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (tab.active && tab.selected && tab.status === "complete") {
     if (tab.url.indexOf(targetPage) !== -1) {
-      alert(JSON.stringify(tabId))
-      alert(JSON.stringify(changeInfo))
-      alert(JSON.stringify(tab))
+      sendMsgToContentScript({ type: 'get_info', value: 'ssss' })
     }
   }
 })
