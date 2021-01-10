@@ -4,120 +4,49 @@
 
 'use strict'
 
-
-let activeURL = ''
-const targetPage = 'baidu.com'
+const targetPage = 'zhipin.com'
 const mainSiteURL = 'https://www.wondercv.com/cvs'
-const RULE = {
-  conditions: [
-    new chrome.declarativeContent.PageStateMatcher({
-      pageUrl: { urlContains: targetPage }
-    })
-  ],
-  actions: [ new chrome.declarativeContent.ShowPageAction() ]
-}
-
+const mainSiteDomain = '.wondercv.com'
+const cookieName = 'sdktoken'
 
 // installed
-chrome.runtime.onInstalled.addListener(function() {
+chrome.runtime.onInstalled.addListener(function() {})
 
-  chrome.declarativeContent.onPageChanged.removeRules(undefined, () => {
-    chrome.declarativeContent.onPageChanged.addRules([RULE])
-  })
-  
-
-
-  // pageAction.onClicked
-  chrome.pageAction.onClicked.addListener(() => {
-    alert('pageAction.onClicked')
-  })
-  
-
-  // browserAction.onClicked
-  chrome.browserAction.onClicked.addListener(() => {
-    alert('browserAction.onClicked')
-  })
-
-
-  // contextMenus.onClicked
-  chrome.contextMenus.onClicked.addListener((info, tab) => {
-    if (info.menuItemId == 'create-command') {
-      chrome.windows.create({ url: 'https://www.wondercv.com/cvs' }, (win) => {
-        sendMsgToContentScript({ type: 'get_user_state', value: { win } })
-      })
-      // sendMsgToContentScript({ type: 'get_info', value: { url: activeURL } })
-    }
-  })
-
-
-  // tabs.onUpdated
-  chrome.tabs.onUpdated.addListener((tabId,changeInfo,tab) => {
-    
-    activeURL = tab.url
-
-    // if (activeURL.includes(mainSiteURL)) {
-    //   alert('打开了主站')
-    // }
-
-    const isIncludes = activeURL.includes(targetPage)
-    const params = { 
-      url: activeURL, 
-      tabId, 
-      includes: isIncludes ? 'yes' : 'no'
-    }
-    if (changeInfo.status === 'complete') {
-      // alert('tabs.onUpdated')
-      sendMsgToContentScript({ 
-        type: 'get_info', 
-        value: params
-      })
-      isIncludes ? chrome.pageAction.show(tabId) : chrome.pageAction.hide(tabId)
-    }
-    
-    if (activeURL.includes(targetPage)) {
-      
-    } else {
-      
-    }
-  })
-
+chrome.browserAction.onClicked.addListener(function(tab) {
+  chrome.tabs.update(tab.id, { selected: true, url: mainSiteURL })
 })
 
+chrome.windows.onCreated.addListener(function(createInfo) {
+  checkisAuthed()
+})
 
+function setBrowserActionIcon(iconPath) {
+  chrome.browserAction.setIcon({ path: iconPath })
+}
 
+chrome.cookies.onChanged.addListener(function(changeInfo) {
+  const { cookie } = changeInfo || {}
+  if (cookie && cookie.domain && cookie.domain.indexOf(mainSiteDomain) !== 1) {
+    checkisAuthed()
+  }
+})
 
-
-
-
-
-// 向 content 发消息
-function sendMsgToContentScript(message, callback){
-  chrome.tabs.getSelected(null, tab => {
-    chrome.tabs.sendMessage(tab.id, message, response => {
-      callback && callback(response)
-    })
+function checkisAuthed() {
+  chrome.cookies.get({ name: cookieName, url: 'http://www.wondercv.com/talent'  }, function(cookie) {
+    if (cookie) {
+      setBrowserActionIcon("images/icon-19.png")
+      return
+    }
+    setBrowserActionIcon("images/get_started16.png")
   })
 }
 
-// 接收 content 消息
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if(request.type === 'contentMsg'){
-    console.log('收到来自content的消息：' + request.value)
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  if (tab.active && tab.selected && tab.status === "complete") {
+    if (tab.url.indexOf(targetPage) !== -1) {
+      alert(JSON.stringify(tabId))
+      alert(JSON.stringify(changeInfo))
+      alert(JSON.stringify(tab))
+    }
   }
-  sendResponse('我是后台，已收到你的消息。')
 })
-
-
-
-/**
- * 
- * 
-  chrome.contextMenus.create({
-    id: 'create-command',
-    title: '超级简历-生成职位匹配信息',
-    contexts: ['all']
-  })
-  chrome.contextMenus.remove('create-command')
- * 
- * 
- */
