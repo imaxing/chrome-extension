@@ -4,26 +4,34 @@
 
 'use strict'
 
-const targetPage = 'zhipin.com'
-const mainSiteURL = 'https://www.wondercv.com/cvs'
-const mainSiteDomain = '.wondercv.com'
-const cookieName = 'sdktoken'
+const targetPage = 'zhipin.com' // 目标站点
+const mainSiteURL = 'https://www.wondercv.com/cvs' // 主站url
+const mainSiteDomain = '.wondercv.com' // 主站的domain
+const cookieName = 'sdktoken' // 判断登录状态的cookie的name
 
 // installed
-chrome.runtime.onInstalled.addListener(function() {})
+chrome.runtime.onInstalled.addListener(function() {
+  // 插件安装的时候判断登录状态
+  checkisAuthed()
+})
 
+// 点击图标的时候执行的逻辑
 chrome.browserAction.onClicked.addListener(function(tab) {
   chrome.tabs.update(tab.id, { selected: true, url: mainSiteURL })
 })
 
+
 chrome.windows.onCreated.addListener(function(createInfo) {
+  // 打开window的时候判断登录状态
   checkisAuthed()
 })
 
+// 动态设置browser_action的icon
 function setBrowserActionIcon(iconPath) {
   chrome.browserAction.setIcon({ path: iconPath })
 }
 
+// 在主站执行登录退出时候判断登录状态
 chrome.cookies.onChanged.addListener(function(changeInfo) {
   const { cookie } = changeInfo || {}
   if (cookie && cookie.domain && cookie.domain.indexOf(mainSiteDomain) !== 1) {
@@ -31,6 +39,7 @@ chrome.cookies.onChanged.addListener(function(changeInfo) {
   }
 })
 
+// 判断登录状态
 function checkisAuthed() {
   chrome.cookies.get({ name: cookieName, url: 'http://www.wondercv.com/talent'  }, function(cookie) {
     if (cookie) {
@@ -41,6 +50,7 @@ function checkisAuthed() {
   })
 }
 
+// 用户访问目标站点的时候执行的逻辑
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (tab.active && tab.selected && tab.status === "complete") {
     if (tab.url.indexOf(targetPage) !== -1) {
