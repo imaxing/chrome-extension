@@ -1,16 +1,21 @@
 .job-scan-box {
   position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  border-radius: 4px;
+  top: 0;
+  right: 0;
+  width: 400px;
+  height: 100vh;
   background: #fff;
-  border: 1px solid #eee;
+  border-left: 1px solid #eee;
   z-index: 1000000;
   box-shadow: 0 0 12px 0 rgba(0,0,0,.04);
   color: #333;
-  word-break: break-all;
+  cursor: pointer;
+  transition: all ease 0.3s;
 }
+.hide_content {
+  display: none;
+}
+
 .job-scan-box .job-scan-header {
   height: 60px;
   background-color: #7ED2C8;
@@ -31,8 +36,44 @@
   color: #ddd;
 }
 .job-scan-box .job-scan-body {
-  overflow: auto;
-  width: 700px;
-  height: 500px;
+  overflow-x: hidden;
+  width: calc(100% - 24px);
+  height: calc(100vh - 60px);
   padding: 12px 12px;
+  overflow-y: scroll;
+}
+
+#job-scan-modal.hide {
+  position: fixed;
+  right: -30px;
+  top: 300px;
+  width: 60px;
+  height: 60px;
+  line-height: 40px;
+  text-align: center;
+  background-color: #DF5E59;
+  padding: 0;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all ease 0.3s;
+}
+#job-scan-modal.hide:hover {
+  right: 0px;
+}
+#job-scan-modal.hide .job-scan-header,
+#job-scan-modal.hide .job-scan-body {
+  display: none !important;
+}
+#job-scan-modal.hide .hide_content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+#job-scan-modal.hide .hide_content > span {
+  height: 20px;
+  line-height: 20px;
 }

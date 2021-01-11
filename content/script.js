@@ -19,10 +19,12 @@ function getCvResumeInfo() {
 }
 
 // 关闭窗口
-function closeModal () {
+function closeModal (e) {
+  e && e.stopPropagation()
   let modalEl = document.querySelector(`#${modalID}`)
   if (modalEl) {
-    document.body.removeChild(modalEl)
+    modalEl.classList.add('hide')
+    // document.body.removeChild(modalEl)
   }
 }
 
@@ -47,7 +49,10 @@ function modalTemplate(resumeInfo) {
       <h2>超级简历职位分析</h2>
       <span id="${prefixClass}-close-btn" class="close-btn">关闭</span>
     </div>
-    <div class="${prefixClass}-body">${resumeInfo}</div>
+    <div class="${prefixClass}-body">
+      ${resumeInfo}
+    </div>
+    <div class="hide_content"><span>超级</span><span>简历</span></div>
   `
 }
 
@@ -66,6 +71,10 @@ function renderModal(cvInfo) {
     modalEl.innerHTML = modalContent
   }
   document.querySelector(`#${prefixClass}-close-btn`).addEventListener('click', closeModal)
+  modalEl.addEventListener('click', (e) => {
+    e.stopPropagation()
+    modalEl.classList.contains('hide') && modalEl.classList.remove('hide')
+  })
 }
 
 
