@@ -17,7 +17,12 @@ chrome.runtime.onInstalled.addListener(function() {
 
 // 点击图标的时候执行的逻辑
 chrome.browserAction.onClicked.addListener(function(tab) {
-  chrome.tabs.update(tab.id, { selected: true, url: mainSiteURL })
+  const auth = checkisAuthed()
+  if (auth) {
+    chrome.tabs.update(tab.id, { selected: true, url: mainSiteURL })
+  } else {
+    alert('未登录')
+  }
 })
 
 
@@ -43,10 +48,11 @@ chrome.cookies.onChanged.addListener(function(changeInfo) {
 function checkisAuthed() {
   chrome.cookies.get({ name: cookieName, url: 'http://www.wondercv.com/talent'  }, function(cookie) {
     if (cookie) {
-      setBrowserActionIcon("images/icon-19.png")
-      return
+      setBrowserActionIcon("images/get_started16.png")
+      return true
     }
-    setBrowserActionIcon("images/get_started16.png")
+    setBrowserActionIcon("images/get_started_unlogin_16.png")
+    return false
   })
 }
 
