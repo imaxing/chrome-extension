@@ -5,7 +5,6 @@
   transform: translate(-50%, -50%);
   border-radius: 4px;
   background: #fff;
-  padding: 12px 12px;
   border: 1px solid #eee;
   z-index: 1000000;
   box-shadow: 0 0 12px 0 rgba(0,0,0,.04);
@@ -13,12 +12,18 @@
   word-break: break-all;
 }
 .job-scan-box .job-scan-header {
-  padding-bottom: 12px;
+  height: 60px;
+  background-color: #7ED2C8;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 15px;
 }
 .job-scan-box .close-btn {
-  position: absolute;
-  right: 10px;
-  top: 10px;
+  /* position: absolute; */
+  /* right: 10px; */
+  /* top: 10px; */
   font-size: 12px;
   width: 40px;
   height: 20px;
@@ -29,4 +34,5 @@
   overflow: auto;
   width: 700px;
   height: 500px;
+  padding: 12px 12px;
 }
